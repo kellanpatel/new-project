@@ -1,0 +1,16 @@
+written documentation
+drawn diagrams
+app works without a database
+
+TODO:
+use kubernetes
+
+
+
+Milestone 1 complete:
+- Created the Market Service using FastAPI.
+- Added CRUD endpoints for marketplace items.
+- Added endpoint to mark an item as sold.
+- Tested the API manually using /docs.
+- Added automated tests using pytest.
+- All tests passed: 8 passed.
