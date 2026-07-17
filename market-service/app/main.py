@@ -16,6 +16,8 @@ from app.database import create_db_and_tables, get_session
 from app.models import Item, ItemStatus
 from app.schemas import ItemCreate, ItemRead, ItemUpdate
 
+from app import activity_client
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,7 +47,13 @@ def health_check() -> dict[str, str]:
 
 @app.post("/items", response_model=ItemRead, status_code=status.HTTP_201_CREATED)
 def create_market_item(item_create: ItemCreate, session: SessionDep) -> Item:
-    return create_item(session, item_create)
+    item = create_item(session, item_create)
+    activity_client.send_activity(
+        event_type="ITEM_CREATED",
+        item_id=item.id,
+        message=f"Item '{item.title}' was created.",
+    )
+    return item
 
 
 @app.get("/items", response_model=list[ItemRead])
@@ -115,3 +123,4 @@ def delete_market_item(item_id: int, session: SessionDep) -> dict[str, str]:
     delete_item(session, item)
 
     return {"message": "Item deleted"}
+
